@@ -1,3 +1,3 @@
-# vktools (development version)
+# 0.0.0.9
 
-* Initial CRAN submission.
+* Initial commit. This package originated from shinyvktools, to modularize wrappers and utils
