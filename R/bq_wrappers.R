@@ -13,10 +13,10 @@
 #' @return invisible.
 #'
 #' @export
-bq_get <- function(query, dataset = NULL, location = NULL){
+bq_get <- function(query, dataset = NULL, location = NULL, ...){
 
   res <- bigrquery::bq_project_query(dataset, query) %>%
-    bigrquery::bq_table_download()
+    bigrquery::bq_table_download(...)
 
   if(!is.null(location)){
 
