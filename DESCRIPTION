@@ -13,6 +13,7 @@ Imports:
     bigrquery,
     dplyr,
     googleway,
+    leaflet,
     magrittr,
     sf,
     tibble,
