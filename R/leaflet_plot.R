@@ -31,6 +31,8 @@ leaflet_plot <- function(data_sf){
     addTYPE()
 }
 
+#' @export
+#' @rdname leaflet_plot
 map_polygons <- function(table_sf, variable_color, variable_label,
                          legend_title = NULL, legend_prefix = NULL, legend_suffix = NULL,
                          color_palette = 'YlOrRd'){
