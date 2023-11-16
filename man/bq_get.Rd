@@ -6,7 +6,7 @@
 \alias{bq_post}
 \title{bq_get}
 \usage{
-bq_get(query, dataset = NULL, location = NULL)
+bq_get(query, dataset = NULL, location = NULL, ...)
 
 sf_to_wk(data, location = geometry)
 
@@ -32,6 +32,8 @@ bq_post(
 \item{project}{str name of the project that will perform the job}
 
 \item{table}{str name of the table that will perform the job}
+
+\item{create_disposition, write_disposition, quiet}{options to set in the job}
 }
 \value{
 invisible.
