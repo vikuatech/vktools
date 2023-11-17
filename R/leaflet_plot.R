@@ -34,8 +34,11 @@ leaflet_plot <- function(data_sf){
 #' @export
 #' @rdname leaflet_plot
 map_polygons <- function(table_sf, variable_color, variable_label,
+                         color_palette = 'YlOrRd',
                          legend_title = NULL, legend_prefix = NULL, legend_suffix = NULL,
-                         color_palette = 'YlOrRd'){
+                         weight = 1, fillOpacity = 0.6, color = '#444444',
+                         highlightOptions = leaflet::highlightOptions(color = "white", weight = 2, bringToFront = TRUE)
+                         ){
 
   variable_color_values <- table_sf %>% dplyr::pull({{variable_color}})
   variable_label_values <- table_sf %>% dplyr::pull({{variable_label}})
@@ -46,12 +49,10 @@ map_polygons <- function(table_sf, variable_color, variable_label,
     leaflet::addTiles() %>%
     leaflet::addProviderTiles(leaflet::providers$CartoDB.Positron) %>%
     leaflet::addPolygons(
-      weight = 1,
-      fillOpacity = 0.6,
       label = lapply(variable_label_values, htmltools::HTML),
       fillColor = color_value(variable_color_values),
-      color = '#444444',
-      highlightOptions = leaflet::highlightOptions(color = "white", weight = 2, bringToFront = TRUE)
+      weight = weight, fillOpacity = fillOpacity, color = color,
+      highlightOptions = highlightOptions
     ) %>%
     leaflet::addLegend(
       position = 'bottomleft',
