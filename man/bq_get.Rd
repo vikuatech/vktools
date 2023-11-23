@@ -2,13 +2,10 @@
 % Please edit documentation in R/bq_wrappers.R
 \name{bq_get}
 \alias{bq_get}
-\alias{sf_to_wk}
 \alias{bq_post}
 \title{bq_get}
 \usage{
-bq_get(query, dataset = NULL, location = NULL, ...)
-
-sf_to_wk(data, location = geometry)
+bq_get(query, project = NULL, location = NULL, ...)
 
 bq_post(
   data,
@@ -23,15 +20,11 @@ bq_post(
 \arguments{
 \item{query}{SQL query to execute}
 
-\item{dataset}{str name of the dataset that will perform the job}
+\item{project, dataset, table}{str name of the entity that will perform the job}
 
-\item{location}{str name of the wkt column to convert to sf. When bq_post the column is a geometry in a `data`_sf object and it will be converted to wkt}
+\item{location}{str name of the wkt column to convert to sf.}
 
-\item{data}{df to upload. In `sf_to_wk` data must be a sf object}
-
-\item{project}{str name of the project that will perform the job}
-
-\item{table}{str name of the table that will perform the job}
+\item{data}{df to upload.}
 
 \item{create_disposition, write_disposition, quiet}{options to set in the job}
 }

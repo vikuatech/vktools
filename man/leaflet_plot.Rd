@@ -3,26 +3,37 @@
 \name{leaflet_plot}
 \alias{leaflet_plot}
 \alias{map_polygons}
-\title{geocoding}
+\title{leaflet_plot}
 \usage{
 leaflet_plot(data_sf)
 
 map_polygons(
-  table_sf,
+  data_sf,
   variable_color,
   variable_label,
+  palette = "YlOrRd",
+  reverse = FALSE,
   legend_title = NULL,
   legend_prefix = NULL,
   legend_suffix = NULL,
-  color_palette = "YlOrRd"
+  weight = 1,
+  fillOpacity = 0.6,
+  color = "#444444",
+  highlightOptions = leaflet::highlightOptions(color = "white", weight = 2, bringToFront
+    = TRUE)
 )
 }
 \arguments{
-\item{data_sf}{dataframe with the column string *address*}
+\item{data_sf}{sf dataframe}
+
+\item{variable_color, variable_label}{fields to use in map}
+
+\item{palette, reverse}{settings in leaflet::colorNumeric}
+
+\item{legend_title, legend_prefix, legend_suffix, weight, fillOpacity, color, highlightOptions}{settings. view ?leaflet() fro more help}
 }
 \value{
-geocode_address, geocode_apply and geocode_update return the same address_df with lat, lng and place_id columns
-geocode_google_safe return a list with lat, lng and place_id
+leaflet map viewer
 }
 \description{
 quick leaflet map with feature type discovery

@@ -1,12 +1,14 @@
-#' geocoding
+#' leaflet_plot
 #'
 #' @description quick leaflet map with feature type discovery
 #'
-#' @param data_sf dataframe with the column string *address*
+#' @param data_sf sf dataframe
+#' @param variable_color,variable_label fields to use in map
+#' @param palette,reverse settings in leaflet::colorNumeric
+#' @param legend_title,legend_prefix,legend_suffix,weight,fillOpacity,color,highlightOptions settings. view ?leaflet() fro more help
 #'
 #' @return
-#' geocode_address, geocode_apply and geocode_update return the same address_df with lat, lng and place_id columns
-#' geocode_google_safe return a list with lat, lng and place_id
+#' leaflet map viewer
 #'
 #' @export
 leaflet_plot <- function(data_sf){
@@ -33,18 +35,18 @@ leaflet_plot <- function(data_sf){
 
 #' @export
 #' @rdname leaflet_plot
-map_polygons <- function(table_sf, variable_color, variable_label,
-                         color_palette = 'YlOrRd',
+map_polygons <- function(data_sf, variable_color, variable_label,
+                         palette = 'YlOrRd', reverse = FALSE,
                          legend_title = NULL, legend_prefix = NULL, legend_suffix = NULL,
                          weight = 1, fillOpacity = 0.6, color = '#444444',
                          highlightOptions = leaflet::highlightOptions(color = "white", weight = 2, bringToFront = TRUE)
                          ){
 
-  variable_color_values <- table_sf %>% dplyr::pull({{variable_color}})
-  variable_label_values <- table_sf %>% dplyr::pull({{variable_label}})
+  variable_color_values <- data_sf %>% dplyr::pull({{variable_color}})
+  variable_label_values <- data_sf %>% dplyr::pull({{variable_label}})
 
-  color_value <- leaflet::colorNumeric(color_palette, variable_color_values)
-  table_sf %>%
+  color_value <- leaflet::colorNumeric(palette, variable_color_values, reverse = reverse)
+  data_sf %>%
     leaflet::leaflet() %>%
     leaflet::addTiles() %>%
     leaflet::addProviderTiles(leaflet::providers$CartoDB.Positron) %>%

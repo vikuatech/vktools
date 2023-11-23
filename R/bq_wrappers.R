@@ -3,19 +3,17 @@
 #' @description wrapper helpers to communicate with Bigquery
 #'
 #' @param query SQL query to execute
-#' @param dataset str name of the dataset that will perform the job
-#' @param location str name of the wkt column to convert to sf. When bq_post the column is a geometry in a `data`_sf object and it will be converted to wkt
-#' @param data df to upload. In `sf_to_wk` data must be a sf object
-#' @param project str name of the project that will perform the job
-#' @param table str name of the table that will perform the job
+#' @param project,dataset,table str name of the entity that will perform the job
+#' @param location str name of the wkt column to convert to sf.
+#' @param data df to upload.
 #' @param create_disposition,write_disposition,quiet options to set in the job
 #'
 #' @return invisible.
 #'
 #' @export
-bq_get <- function(query, dataset = NULL, location = NULL, ...){
+bq_get <- function(query, project = NULL, location = NULL, ...){
 
-  res <- bigrquery::bq_project_query(dataset, query) %>%
+  res <- bigrquery::bq_project_query(project, query) %>%
     bigrquery::bq_table_download(...)
 
   if(!is.null(location)){
@@ -32,16 +30,6 @@ bq_get <- function(query, dataset = NULL, location = NULL, ...){
   }
 
   return(ret)
-}
-
-#' @export
-#' @rdname bq_get
-sf_to_wk <- function(data, location = geometry){
-  data %>%
-    tibble::as_tibble() %>%
-    dplyr::mutate(
-      "{{location}}" := sf::st_as_text({{location}}) %>% wk::wkt()
-    )
 }
 
 #' @export
