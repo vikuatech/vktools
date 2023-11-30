@@ -25,7 +25,7 @@ tryCatch({
     dplyr::bind_rows() %>%
     tidyr::unnest(geometry) %>%
     tidyr::unnest(location) %>%
-    dplyr::select(name, place_id, types, vicinity, rating, user_ratings_total, lat, lng)
+    dplyr::select(any_of(c('name', 'place_id', 'types', 'vicinity', 'rating', 'user_ratings_total', 'lat', 'lng')))
 
 },
 error = function(e){
