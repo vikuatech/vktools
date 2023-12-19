@@ -3,6 +3,7 @@
 export(bind_places)
 export(bq_get)
 export(bq_post)
+export(bq_post_steps)
 export(geocode_address)
 export(geocode_apply)
 export(geocode_google_safe)

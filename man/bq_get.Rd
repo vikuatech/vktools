@@ -3,6 +3,7 @@
 \name{bq_get}
 \alias{bq_get}
 \alias{bq_post}
+\alias{bq_post_steps}
 \title{bq_get}
 \usage{
 bq_get(query, project = NULL, location = NULL, ...)
@@ -16,6 +17,8 @@ bq_post(
   write_disposition = "WRITE_TRUNCATE",
   quiet = F
 )
+
+bq_post_steps(data, steps_by = 1e+05, ...)
 }
 \arguments{
 \item{query}{SQL query to execute}
@@ -27,6 +30,8 @@ bq_post(
 \item{data}{df to upload.}
 
 \item{create_disposition, write_disposition, quiet}{options to set in the job}
+
+\item{steps_by}{number of rows to upload in each step.}
 }
 \value{
 invisible.

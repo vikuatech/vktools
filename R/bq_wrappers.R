@@ -7,6 +7,7 @@
 #' @param location str name of the wkt column to convert to sf.
 #' @param data df to upload.
 #' @param create_disposition,write_disposition,quiet options to set in the job
+#' @param steps_by number of rows to upload in each step.
 #'
 #' @return invisible.
 #'
@@ -51,5 +52,26 @@ bq_post <- function(data, project, dataset, table,
       quiet = quiet,
       fields = bigrquery::as_bq_fields(data)
     )
+
+}
+
+#' @export
+#' @rdname bq_get
+bq_post_steps <- function(data, steps_by = 100000, ...){
+
+  steps <- seq(0, nrow(data), by=steps_by)
+  steps <- c(steps, nrow(data))
+  for(.row in 2:length(steps)){
+
+
+    # .row <- 3
+    init <- steps[.row-1]+1
+    end <- steps[.row]
+    cat('Uploading from: ', init, ' to: ', end, '\n')
+    data_sample <- data[init:end, ]
+
+    data_sample %>% vktools::bq_post(...)
+
+  }
 
 }
