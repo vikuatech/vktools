@@ -8,6 +8,8 @@
 #' @param data df to upload.
 #' @param create_disposition,write_disposition,quiet options to set in the job
 #' @param steps_by number of rows to upload in each step.
+#' @param ... other arguments to pass to bigrquery::bq_table_upload or bigrquery::bq_table_download
+#' @param geom_column name of the geometry column to be converted to GEOGRAPHY
 #'
 #' @return invisible.
 #'
@@ -73,5 +75,35 @@ bq_post_steps <- function(data, steps_by = 100000, ...){
     data_sample %>% vktools::bq_post(...)
 
   }
+
+}
+
+#' @export
+#' @rdname bq_get
+bq_create_geometry <- function(df, geom_column, project, dataset, table, ...){
+
+  # Create auxiliar Table with geometry as STRING
+  table_aux <- paste0(table, '_aux')
+  geom_column_expr <- rlang::enexpr(geom_column)
+
+  df %>%
+    dplyr::mutate('{{geom_column}}' := as.character( {{geom_column}} ) ) %>%
+    vktools::bq_post(project, dataset, table_aux, ...)
+
+  # Create new table parsing geometry as GEOGRAPHY
+  create_table_query <- glue::glue('CREATE TABLE `{project}.{dataset}.{table}` as (
+SELECT
+* except({geom_column_expr}),
+st_geogfromtext({geom_column_expr}, make_valid=>true) as {geom_column_expr},
+FROM `{project}.{dataset}.{table_aux}`)
+')
+
+  bigrquery::bq_project_query(project, create_table_query)
+
+  # Remove auxiliar table
+  bigrquery::bq_project_query(
+    project,
+    glue::glue('DROP TABLE `{project}.{dataset}.{table_aux}`')
+  )
 
 }
