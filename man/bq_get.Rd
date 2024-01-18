@@ -4,6 +4,7 @@
 \alias{bq_get}
 \alias{bq_post}
 \alias{bq_post_steps}
+\alias{bq_create_geometry}
 \title{bq_get}
 \usage{
 bq_get(query, project = NULL, location = NULL, ...)
@@ -19,6 +20,8 @@ bq_post(
 )
 
 bq_post_steps(data, steps_by = 1e+05, ...)
+
+bq_create_geometry(df, geom_column, project, dataset, table, ...)
 }
 \arguments{
 \item{query}{SQL query to execute}
@@ -27,11 +30,15 @@ bq_post_steps(data, steps_by = 1e+05, ...)
 
 \item{location}{str name of the wkt column to convert to sf.}
 
+\item{...}{other arguments to pass to bigrquery::bq_table_upload or bigrquery::bq_table_download}
+
 \item{data}{df to upload.}
 
 \item{create_disposition, write_disposition, quiet}{options to set in the job}
 
 \item{steps_by}{number of rows to upload in each step.}
+
+\item{geom_column}{name of the geometry column to be converted to GEOGRAPHY}
 }
 \value{
 invisible.
