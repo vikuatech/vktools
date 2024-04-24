@@ -5,11 +5,9 @@
 \alias{bq_post}
 \alias{bq_post_steps}
 \alias{bq_create_geometry}
-\alias{bq_get_dataset_schema}
-\alias{bq_parse_table_schema}
 \title{bq_get}
 \usage{
-bq_get(query, project = NULL, location = NULL, ...)
+bq_get(query, project = NULL, location = deprecated(), convert_sf = TRUE, ...)
 
 bq_post(
   data,
@@ -24,17 +22,15 @@ bq_post(
 bq_post_steps(data, steps_by = 1e+05, ...)
 
 bq_create_geometry(df, geom_column, project, dataset, table, ...)
-
-bq_get_dataset_schema(project, dataset)
-
-bq_parse_table_schema(table_metadata)
 }
 \arguments{
 \item{query}{SQL query to execute}
 
 \item{project, dataset, table}{str name of the entity that will perform the job}
 
-\item{location}{str name of the wkt column to convert to sf.}
+\item{location}{`r lifecycle::badge("deprecated")` use the `convert_sf` argument instead}
+
+\item{convert_sf}{convert all wkt columns (GEOGRAPHY in BigQuery) to sfc and return a sf object}
 
 \item{...}{other arguments to pass to bigrquery::bq_table_upload or bigrquery::bq_table_download}
 
