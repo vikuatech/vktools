@@ -14,6 +14,8 @@
 #'
 #' @return invisible.
 #'
+#' @importFrom lifecycle deprecated
+#'
 #' @export
 bq_get <- function(query, project = NULL, location = deprecated(), convert_sf = TRUE, ...){
 
@@ -42,7 +44,7 @@ bq_get <- function(query, project = NULL, location = deprecated(), convert_sf = 
     # Convert to sf
     res_sf <- res %>%
       dplyr::mutate(
-        dplyr::across(tidyselect::where(wk::is_wk_wkt), ~sf::st_as_sfc(geometry2) %>% sf::st_set_crs(4326) )
+        dplyr::across(tidyselect::where(wk::is_wk_wkt), ~sf::st_as_sfc(.x) %>% sf::st_set_crs(4326) )
       ) %>%
       sf::st_as_sf()
 
