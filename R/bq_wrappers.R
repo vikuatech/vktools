@@ -17,7 +17,7 @@
 #' @export
 bq_get <- function(query, project = NULL, location = deprecated(), convert_sf = TRUE, ...){
 
-  if (lifecycle::is_present(path)) {
+  if (lifecycle::is_present(location)) {
     lifecycle::deprecate_warn("0.0.16", "bq_get(location = )", "bq_get(convert_sf = TRUE)")
   }
 
