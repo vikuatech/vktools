@@ -3,6 +3,8 @@
 export(bind_places)
 export(bq_create_geometry)
 export(bq_get)
+export(bq_get_dataset_schema)
+export(bq_parse_table_schema)
 export(bq_post)
 export(bq_post_steps)
 export(geocode_address)

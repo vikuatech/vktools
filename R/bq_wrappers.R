@@ -4,7 +4,8 @@
 #'
 #' @param query SQL query to execute
 #' @param project,dataset,table str name of the entity that will perform the job
-#' @param location str name of the wkt column to convert to sf.
+#' @param location `r lifecycle::badge("deprecated")` use the `convert_sf` argument instead
+#' @param convert_sf convert all wkt columns (GEOGRAPHY in BigQuery) to sfc and return a sf object
 #' @param data df to upload.
 #' @param create_disposition,write_disposition,quiet options to set in the job
 #' @param steps_by number of rows to upload in each step.
@@ -14,25 +15,46 @@
 #' @return invisible.
 #'
 #' @export
-bq_get <- function(query, project = NULL, location = NULL, ...){
+bq_get <- function(query, project = NULL, location = deprecated(), convert_sf = TRUE, ...){
 
+  if (lifecycle::is_present(path)) {
+    lifecycle::deprecate_warn("0.0.16", "bq_get(location = )", "bq_get(convert_sf = TRUE)")
+  }
+
+  # Fetch data from BQ
   res <- bigrquery::bq_project_query(project, query) %>%
-    bigrquery::bq_table_download(...)
+    bigrquery::bq_table_download(...) %>%
+    tibble::as_tibble()
 
-  if(!is.null(location)){
+  # Get column classes & check for geometry column
+  column_classes <- res %>% purrr::map(~class(.x) %>% purrr::pluck(1))
+  has_wkt <- any(column_classes == 'wk_wkt')
 
+  # If geometry then convert to sf
+  if( all(convert_sf, has_wkt) ){
+
+    # Warn if not sf installed
     if (!requireNamespace("sf", quietly = TRUE)) {
-      stop("sf required: install that first") # nocov
+      warning("Cannot convert wkt column to sf. Please install sf package")
+      return( res )
     }
 
-    ret <- res %>%
-      sf::st_as_sf(wkt = location, crs = 'WGS84')
-  }
-  else{
-    ret <- tibble::as_tibble(res)
+    # Convert to sf
+    res_sf <- res %>%
+      dplyr::mutate(
+        dplyr::across(tidyselect::where(wk::is_wk_wkt), ~sf::st_as_sfc(geometry2) %>% sf::st_set_crs(4326) )
+      ) %>%
+      sf::st_as_sf()
+
+    return(res_sf)
   }
 
-  return(ret)
+  # If not geometry then return tibble
+  else{
+    return(res)
+  }
+
+
 }
 
 #' @export

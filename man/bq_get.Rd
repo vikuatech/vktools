@@ -5,6 +5,8 @@
 \alias{bq_post}
 \alias{bq_post_steps}
 \alias{bq_create_geometry}
+\alias{bq_get_dataset_schema}
+\alias{bq_parse_table_schema}
 \title{bq_get}
 \usage{
 bq_get(query, project = NULL, location = NULL, ...)
@@ -22,6 +24,10 @@ bq_post(
 bq_post_steps(data, steps_by = 1e+05, ...)
 
 bq_create_geometry(df, geom_column, project, dataset, table, ...)
+
+bq_get_dataset_schema(project, dataset)
+
+bq_parse_table_schema(table_metadata)
 }
 \arguments{
 \item{query}{SQL query to execute}
