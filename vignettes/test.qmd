@@ -4,11 +4,20 @@ format: html
 ---
 
 ```{r}
-bigrquery::bq_auth('.secrets/insure-risk-app-manager.json')
+library(here)
+```
+
+
+```{r}
+bigrquery::bq_auth(path = here('.secrets/insure-risk-app-manager.json'))
 ```
 
 ```{r}
 devtools::load_all()
-geom_check <- vktools::bq_get('SELECT id, geometry, geometry as geometry2 FROM `insure-risk.prod_realseguros.grid_geometry` LIMIT 5', 'insure-risk')
+geom_check <- vktools::bq_get(
+  'SELECT id, geometry, geometry as geometry2 FROM `insure-risk.prod_realseguros.grid_geometry` LIMIT 5',
+  project = 'insure-risk',
+  location = 'geometry'
+)
 ```
 

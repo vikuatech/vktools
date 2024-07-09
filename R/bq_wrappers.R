@@ -20,7 +20,11 @@
 bq_get <- function(query, project = NULL, location = deprecated(), convert_sf = TRUE, ...){
 
   if (lifecycle::is_present(location)) {
-    lifecycle::deprecate_warn("0.0.16", "bq_get(location = 'geometry')", "bq_get(convert_sf = TRUE)")
+    lifecycle::deprecate_warn(
+      when = "0.0.16",
+      what = "bq_get(location)",
+      with = "bq_get(convert_sf)"
+    )
   }
 
   # Fetch data from BQ
