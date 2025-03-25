@@ -2,7 +2,7 @@
 #'
 #' @description Perform queries against BQ tables to get urban variables for a selected coordinate
 #'
-#' @param coord sf point object wit lat-lon coordinate in WGS84 CRS
+#' @param coord sf object wit lat-lon coordinate in WGS84 CRS
 #' @param buffer numeric buffer in meters to apply to the coordinate
 #' @param get_hex logical if TRUE return the values by hexagons, otherwise aggregates values to a single joined hexagons
 #'
@@ -12,10 +12,10 @@
 #' @export
 bq_get_population <- function(coord, buffer = NULL, get_hex = TRUE){
 
-  coord_str <- sf::st_as_text(coord) %>% add_buffer(buffer)
+  coord_str <- sf::st_as_text(coord) %>% parse_text_to_bqgeography(buffer)
 
   if(get_hex){
-    select_str <- "population, geometry"
+    select_str <- "fid, population, geometry"
   }
   else{
     select_str <- "
@@ -25,21 +25,21 @@ bq_get_population <- function(coord, buffer = NULL, get_hex = TRUE){
     "
   }
 
-  .q <- sprintf("
+  .q <- glue::glue("
 with
-point_buffer as (
-  select %s as buffer
+poly as (
+  select {coord_str} as polygon
 )
 
 select
-%s
+{select_str}
 from `reporting-338116.assets.world_kontur_population`
 where
 st_intersects(
-  (select buffer from point_buffer),
+  (select polygon from poly),
   geometry
 )
-  ", coord_str, select_str)
+  ")
 
 vktools::bq_get(.q, 'reporting-338116')
 
@@ -237,12 +237,12 @@ vktools::bq_get(.q, 'reporting-338116')
 
 }
 
-add_buffer <- function(coord_text, buffer = NULL){
+parse_text_to_bqgeography <- function(coord_text, buffer = NULL){
   if(!is.null(buffer)){
-    zone <- sprintf("ST_BUFFER(ST_GEOGFROMTEXT('%s'), %s)", coord_text, buffer)
+    zone <- glue::glue("ST_BUFFER(ST_GEOGFROMTEXT('coord_text'), buffer)")
   }
   else{
-    zone <- sprintf("ST_GEOGFROMTEXT('%s')", coord_text)
+    zone <- glue::glue("ST_GEOGFROMTEXT('coord_text')")
   }
 
   return(zone)
