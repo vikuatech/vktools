@@ -239,10 +239,10 @@ vktools::bq_get(.q, 'reporting-338116')
 
 parse_text_to_bqgeography <- function(coord_text, buffer = NULL){
   if(!is.null(buffer)){
-    zone <- glue::glue("ST_BUFFER(ST_GEOGFROMTEXT('coord_text'), buffer)")
+    zone <- glue::glue("ST_BUFFER(ST_GEOGFROMTEXT('{coord_text}'), {buffer})")
   }
   else{
-    zone <- glue::glue("ST_GEOGFROMTEXT('coord_text')")
+    zone <- glue::glue("ST_GEOGFROMTEXT('{coord_text}')")
   }
 
   return(zone)
