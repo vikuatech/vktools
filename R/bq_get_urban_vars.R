@@ -49,12 +49,12 @@ vktools::bq_get(.q, 'reporting-338116')
 #' @rdname bq_get_population
 bq_get_competitors <- function(coord, buffer = NULL){
 
-  coord_str <- sf::st_as_text(coord) %>% add_buffer(buffer)
+  coord_str <- sf::st_as_text(coord) %>% parse_text_to_bqgeography(buffer)
 
-  .q <- sprintf("
+  .q <- glue::glue("
   with
 point_buffer as (
-  select %s as buffer
+  select {coord_str} as buffer
 ),
 
 competitors as (
@@ -75,7 +75,7 @@ where
     (select buffer from point_buffer),
     geometry
   )
-  ", coord_str)
+  ")
 
 vktools::bq_get(.q, 'reporting-338116')
 
@@ -85,13 +85,13 @@ vktools::bq_get(.q, 'reporting-338116')
 #' @rdname bq_get_population
 bq_get_wawa_movements <- function(coord, buffer = NULL){
 
-  coord_str <- sf::st_as_text(coord) %>% add_buffer(buffer)
+  coord_str <- sf::st_as_text(coord) %>% parse_text_to_bqgeography(buffer)
 
-  .q <- sprintf("
+  .q <- glue::glue("
 with
 
 point_buffer as (
-  select %s as buffer
+  select {coord_str} as buffer
 ),
 
 request as (
@@ -144,7 +144,7 @@ dropoffs as (
 select * from pickups
 union all
 select * from dropoffs
-  ", coord_str)
+  ")
 
 vktools::bq_get(.q, 'reporting-338116')
 
@@ -154,14 +154,14 @@ vktools::bq_get(.q, 'reporting-338116')
 #' @rdname bq_get_population
 bq_get_homicidios <- function(coord, buffer = NULL){
 
-  coord_str <- sf::st_as_text(coord) %>% add_buffer(buffer)
+  coord_str <- sf::st_as_text(coord) %>% parse_text_to_bqgeography(buffer)
 
-  .q <- sprintf("
+  .q <- glue::glue("
 with
 
 # Buffer
 point_buffer as (
-  select %s as buffer
+  select {coord_str} as buffer
 ),
 
 # Particiones de Parroquias dentro del Buffer
@@ -198,7 +198,7 @@ select
 st_union_agg(geometry) as geometry,
 sum(area_pct*tasa_muertes_violentas) as tasa_muertes_violentas
 from tasa
-", coord_str)
+")
 
 vktools::bq_get(.q, 'reporting-338116')
 
@@ -206,11 +206,19 @@ vktools::bq_get(.q, 'reporting-338116')
 
 #' @export
 #' @rdname bq_get_population
-bq_get_property_value <- function(coord, buffer = NULL){
+bq_get_property_value <- function(coord, buffer = NULL, property_type = NULL){
 
-  coord_str <- sf::st_as_text(coord) %>% add_buffer(buffer)
+  if(is.null(property_type)){
+    where_clause <- ''
+  }
+  else{
+    property_type_vec <- paste("'", property_type, "'", collapse = ",")
+    where_clause <- glue::glue("WHERE property_type in ({property_type_vec})")
+  }
 
-  .q <- sprintf("
+  coord_str <- sf::st_as_text(coord) %>% parse_text_to_bqgeography(buffer)
+
+  .q <- glue::glue("
 with
 
 zones as (
@@ -218,20 +226,21 @@ zones as (
   zona
   from `reporting-338116.assets.caracas_rah_properties_zones`
   where st_intersects(
-    %s,
+    {coord_str},
     geometry
   )
 )
 
   select
-  avg(if(contract = 'Venta', price_m2, null)) as avg_precio_m2_venta,
-  sum(if(contract = 'Venta', 1, 0)) as n_properties_venta,
-  avg(if(contract = 'Alquiler', price_m2, null)) as avg_precio_m2_alquiler,
-  sum(if(contract = 'Alquiler', 1, 0)) as n_properties_alquiler,
-  sum(if(property_type = 'Comercial', 1, 0)) as n_properties_comercial
+    avg(if(contract = 'Venta', price_m2, null)) as avg_precio_m2_venta,
+    sum(if(contract = 'Venta', 1, 0)) as n_properties_venta,
+    avg(if(contract = 'Alquiler', price_m2, null)) as avg_precio_m2_alquiler,
+    sum(if(contract = 'Alquiler', 1, 0)) as n_properties_alquiler,
+    sum(if(property_type = 'Comercial', 1, 0)) as n_properties_comercial
   from zones
   left join `reporting-338116.assets.caracas_rah_properties_prod` prod on prod.zona = zones.zona
-", coord_str)
+  {where_clause}
+")
 
 vktools::bq_get(.q, 'reporting-338116')
 
