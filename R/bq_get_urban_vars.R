@@ -224,7 +224,7 @@ with
 zones as (
   select
   zona
-  from `reporting-338116.assets.caracas_rah_properties_zones`
+  from `reporting-338116.assets.venezuela_rah_properties_zones`
   where st_intersects(
     {coord_str},
     geometry
@@ -238,7 +238,7 @@ zones as (
     sum(if(contract = 'Alquiler', 1, 0)) as n_properties_alquiler,
     sum(if(property_type = 'Comercial', 1, 0)) as n_properties_comercial
   from zones
-  left join `reporting-338116.assets.caracas_rah_properties_prod` prod on prod.zona = zones.zona
+  left join `reporting-338116.assets.venezuela_rah_properties` prod on prod.zona = zones.zona
   {where_clause}
 ")
 
