@@ -1,7 +1,7 @@
 Package: vktools
 Type: Package
 Title: Wrappers and utils for Vikua Corp analysis
-Version: 0.0.28
+Version: 0.0.29
 Authors@R: person('Rodrigo', 'Serrano', email = 'roserrano@vikua.com', role = c('cre', 'aut'))
 Maintainer: Rodrigo Serrano <roserrano@vikua.com>
 Description: Vikua is a urban-tech latam startup focused on provide urban-oriented analytic solutions 

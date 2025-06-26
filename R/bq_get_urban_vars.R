@@ -232,9 +232,9 @@ zones as (
 )
 
   select
-    avg(if(contract = 'Venta', price_m2, null)) as avg_precio_m2_venta,
+    avg(if(contract = 'Venta', price, null)) as avg_precio_m2_venta,
     sum(if(contract = 'Venta', 1, 0)) as n_properties_venta,
-    avg(if(contract = 'Alquiler', price_m2, null)) as avg_precio_m2_alquiler,
+    avg(if(contract = 'Alquiler', price, null)) as avg_precio_m2_alquiler,
     sum(if(contract = 'Alquiler', 1, 0)) as n_properties_alquiler,
     sum(if(property_type = 'Comercial', 1, 0)) as n_properties_comercial
   from zones
